@@ -27,13 +27,14 @@ namespace GroupDocs.Conversion.Examples.CSharp
             // Returns paths to the converted HTML documents.
             var saveOptions = new HtmlSaveOptions
             {
-                CustomName = "cache",
+
                 PageNumber = 2,
                 NumPagesToConvert = 2,
                 UsePdf = true,
-                OutputType = OutputType.String
+
             };
-            var convertedDocumentPath = conversionHandler.Convert<string>(Common.inputGUIDFile, new HtmlSaveOptions { OutputType = OutputType.String });
+            var convertedDocumentPath = conversionHandler.Convert(Common.inputGUIDFile, new HtmlSaveOptions { });
+            convertedDocumentPath.Save("result-" + Path.GetFileNameWithoutExtension(Common.inputGUIDFile) + ".html");
             //ExEnd:RenderHTMLAsPath
         }
 
@@ -49,7 +50,10 @@ namespace GroupDocs.Conversion.Examples.CSharp
 
             // Convert and save converted HTML documents. 
             // Returns the converted HTML documents as IO Stream.
-            var convertedDocumentStream = conversionHandler.Convert<Stream>(Common.inputGUIDFile, new HtmlSaveOptions());
+            var convertedDocumentStream = conversionHandler.Convert(Common.inputGUIDFile, new HtmlSaveOptions());
+            MemoryStream targetStream = new MemoryStream();
+            convertedDocumentStream.Save(targetStream);
+
             //ExEnd:RenderHTMLAsStream
         }
 
@@ -72,13 +76,16 @@ namespace GroupDocs.Conversion.Examples.CSharp
                 PageNumber = 2,
                 FixedLayout = true,
                 NumPagesToConvert = 2
-                
-                
+
+
             };
 
             // Unprotect input document, Convert and save HTML documents using advance options.
             // Returns the converted HTML documents as IO Stream.
-            var convertedDocumentStream = conversionHandler.Convert<Stream>(Common.inputGUIDFile, loadOptions, saveOptions);
+            var convertedDocumentStream = conversionHandler.Convert(Common.inputGUIDFile, loadOptions, saveOptions);
+            MemoryStream targetStream = new MemoryStream();
+            convertedDocumentStream.Save(targetStream);
+
             //ExEnd:RenderHTMLAdvanceOptions
         }
 
@@ -95,17 +102,18 @@ namespace GroupDocs.Conversion.Examples.CSharp
             // Returns paths to the converted HTML documents.
             var saveOptions = new HtmlSaveOptions
             {
-                CustomName = Common.inputGUIDFile,
+
                 PageNumber = 2,
                 NumPagesToConvert = 2,
                 UsePdf = true,
-                OutputType = OutputType.String
+
             };
 
             // read input document as a stream
             FileStream fileStream = new FileStream(Path.Combine(Common.storagePath, Common.inputGUIDFile), FileMode.Open, FileAccess.Read);
 
-            var convertedDocumentStream = conversionHandler.Convert<String>(fileStream, new HtmlSaveOptions { OutputType = OutputType.String, CustomName = Path.GetFileNameWithoutExtension(Common.inputGUIDFile) });
+            var convertedDocumentPath = conversionHandler.Convert(fileStream, new HtmlSaveOptions { });
+            convertedDocumentPath.Save("result-" + Path.GetFileNameWithoutExtension(Common.inputGUIDFile) + ".html");
 
             fileStream.Close();
             //ExEnd:RenderToHTMLFromStreamToFile
@@ -125,7 +133,10 @@ namespace GroupDocs.Conversion.Examples.CSharp
             // read input document as a stream
             FileStream fileStream = new FileStream(Path.Combine(Common.storagePath, Common.inputGUIDFile), FileMode.Open, FileAccess.Read);
 
-            var convertedDocumentStream = conversionHandler.Convert<Stream>(fileStream, new HtmlSaveOptions()); ;
+            var convertedDocumentStream = conversionHandler.Convert(fileStream, new HtmlSaveOptions()); ;
+            MemoryStream targetStream = new MemoryStream();
+            convertedDocumentStream.Save(targetStream);
+
 
             fileStream.Close();
             //ExEnd:RenderToHTMLFromStreamToStream
@@ -150,11 +161,20 @@ namespace GroupDocs.Conversion.Examples.CSharp
             // Returns paths to the converted image file.
             var saveOptions = new ImageSaveOptions
             {
-                ConvertFileType = ImageSaveOptions.ImageFileType.Jpg,
-                OutputType = OutputType.String
+                ConvertFileType = outputFileType,
+                TiffOptions = { Compression = TiffOptions.TiffCompression.Ccitt4},
+                HorizontalResolution = 203,
+                VerticalResolution = 192,
             };
+            
 
-            var convertedDocumentPath = conversionHandler.Convert<IList<string>>(Common.inputGUIDFile, saveOptions);
+            var convertedDocumentPath = conversionHandler.Convert(Common.inputGUIDFile, saveOptions);
+
+            for (int pagenum = 1; pagenum <= convertedDocumentPath.PageCount; pagenum++)
+            {
+                convertedDocumentPath.Save("result-" + Path.GetFileNameWithoutExtension(Common.inputGUIDFile) + pagenum.ToString() + "." + outputFileType, pagenum);
+
+            }
             //ExEnd:RenderImageAsPathi
         }
 
@@ -168,9 +188,22 @@ namespace GroupDocs.Conversion.Examples.CSharp
             // Instantiating the conversion handler from custom common class
             ConversionHandler conversionHandler = Common.getConversionHandler(); ;
 
+            var saveOptions = new ImageSaveOptions
+            {
+                ConvertFileType = outputFileType,
+                TiffOptions = { Compression = TiffOptions.TiffCompression.Ccitt4 },
+                HorizontalResolution = 203,
+                VerticalResolution = 192,
+            };
+
             // Convert and save converted image file. 
             // Returns the converted image file as IO Stream.
-            var convertedDocumentStream = conversionHandler.Convert<IList<Stream>>(Common.inputGUIDFile, new ImageSaveOptions { ConvertFileType = outputFileType });
+            var convertedDocumentStream = conversionHandler.Convert(Common.inputGUIDFile, saveOptions);
+
+            MemoryStream targetStream = new MemoryStream();
+
+            convertedDocumentStream.Save(targetStream);
+
             //ExEnd:RenderImageAsStream
         }
 
@@ -191,17 +224,21 @@ namespace GroupDocs.Conversion.Examples.CSharp
             // use DPI 300, image width 1024, image height 768
             SaveOptions saveOptions = new ImageSaveOptions
             {
-                ConvertFileType = outputFileType,
+
                 PageNumber = 2,
                 NumPagesToConvert = 2,
-                Dpi = 300,
                 Width = 1024,
-                Height = 768
+                Height = 768,
+                ConvertFileType = outputFileType
             };
 
             // Unprotect input document, Convert and save image file using advance options.
             // Returns the converted image file as IO Stream.
-            var convertedDocumentStream = conversionHandler.Convert<IList<Stream>>(Common.inputGUIDFile, loadOptions, saveOptions);
+            var convertedDocumentStream = conversionHandler.Convert(Common.inputGUIDFile, loadOptions, saveOptions);
+            MemoryStream targetStream = new MemoryStream();
+
+            convertedDocumentStream.Save(targetStream, 1);
+
             //ExEnd:RenderImageAdvanceOptions
         }
 
@@ -219,14 +256,20 @@ namespace GroupDocs.Conversion.Examples.CSharp
             // Returns paths to the converted image file.
             var saveOptions = new ImageSaveOptions
             {
-                ConvertFileType = ImageSaveOptions.ImageFileType.Jpeg,
-                OutputType = OutputType.String
+                ConvertFileType = outputFileType,
+
             };
 
             // read input document as a stream
             FileStream fileStream = new FileStream(Path.Combine(Common.storagePath, Common.inputGUIDFile), FileMode.Open, FileAccess.Read);
 
-            var convertedDocumentStream = conversionHandler.Convert<String>(fileStream, new ImageSaveOptions { OutputType = OutputType.String, CustomName = Path.GetFileNameWithoutExtension(Common.inputGUIDFile) });
+            var convertedDocumentPath = conversionHandler.Convert(fileStream, new ImageSaveOptions { });
+
+            for (int pagenum = 1; pagenum <= convertedDocumentPath.PageCount; pagenum++)
+            {
+                convertedDocumentPath.Save("result-" + Path.GetFileNameWithoutExtension(Common.inputGUIDFile) + pagenum.ToString() + "." + outputFileType, pagenum);
+
+            }
 
             fileStream.Close();
             //ExEnd:RenderToImageFromStreamToFile
@@ -241,14 +284,44 @@ namespace GroupDocs.Conversion.Examples.CSharp
             //ExStart:RenderToImageFromStreamToStream
             // Instantiating the conversion handler from custom common class
             ConversionHandler conversionHandler = Common.getConversionHandler(); ;
+            var imageSaveOptions = new ImageSaveOptions
+            {
+                ConvertFileType = ImageSaveOptions.ImageFileType.Tiff,
+                Grayscale = true,
+                TiffOptions =
+                {
+                    Compression = TiffOptions.TiffCompression.Ccitt4
+                },
+                HorizontalResolution = 203,
+                VerticalResolution = 192,
+            };
 
-            // Returns the converted image file as IO Stream.
-            // read input document as a stream
-            FileStream fileStream = new FileStream(Path.Combine(Common.storagePath, Common.inputGUIDFile), FileMode.Open, FileAccess.Read);
+            var loadOptions = new LoadOptions();
+            using (var source = File.OpenRead(Common.inputGUIDFile))
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    using (var destination = File.OpenWrite("D:/GitRepos/GroupDocs.Conversion-for-.NET/Examples/Data/ConvertedFiles/" + i + "file.Tiff"))
+                    {
+                        using (var result = conversionHandler.Convert(source, loadOptions, imageSaveOptions))
+                        {
+                            result.Save(destination);
+                        }
+                    }
+                }
+                
+            }
 
-            var convertedDocumentStream = conversionHandler.Convert<IList<Stream>>(fileStream, new ImageSaveOptions { ConvertFileType = outputFileType });
 
-            fileStream.Close();
+            //// Returns the converted image file as IO Stream.
+            //// read input document as a stream
+            //FileStream fileStream = new FileStream(Path.Combine(Common.storagePath, Common.inputGUIDFile), FileMode.Open, FileAccess.Read);
+
+            //var convertedDocumentStream = conversionHandler.Convert(fileStream, new ImageSaveOptions { });
+            //MemoryStream targetStream = new MemoryStream();
+            //convertedDocumentStream.Save(targetStream, 1);
+
+            //fileStream.Close();
             //ExEnd:RenderToImageFromStreamToStream
         }
 
@@ -267,15 +340,20 @@ namespace GroupDocs.Conversion.Examples.CSharp
             var saveOptions = new ImageSaveOptions
             {
                 ConvertFileType = ImageSaveOptions.ImageFileType.Psd,
-                OutputType = OutputType.String,
-                PsdOptions = new PsdOptions
-                {
-                    ColorMode = PsdOptions.ColorModes.Grayscale,
-                    CompressionMethod = PsdOptions.CompressionMethods.Raw
-                }
+                //PsdOptions = new PsdOptions
+                //{
+                //    ColorMode = PsdOptions.ColorModes.Grayscale,
+                //    CompressionMethod = PsdOptions.CompressionMethods.Raw
+                //}
             };
 
-            var convertedDocumentPath = conversionHandler.Convert<IList<string>>(Common.inputGUIDFile, saveOptions);
+            var convertedDocumentPath = conversionHandler.Convert(Common.inputGUIDFile, saveOptions);
+
+            for (int pagenum = 1; pagenum <= convertedDocumentPath.PageCount; pagenum++)
+            {
+                convertedDocumentPath.Save("result-" + Path.GetFileNameWithoutExtension(Common.inputGUIDFile) + pagenum.ToString() + "." + ImageSaveOptions.ImageFileType.Psd.ToString(), pagenum);
+
+            }
             //ExEnd:RenderPSDImageAsPath
         }
 
@@ -294,11 +372,17 @@ namespace GroupDocs.Conversion.Examples.CSharp
             // Returns paths to the converted Webp file.
             var saveOptions = new ImageSaveOptions
             {
-                ConvertFileType = ImageSaveOptions.ImageFileType.Webp,
-                OutputType = OutputType.String
+                ConvertFileType = outputFileType,
             };
 
-            var convertedDocumentPath = conversionHandler.Convert<IList<string>>(Common.inputGUIDFile, saveOptions);
+            var convertedDocumentPath = conversionHandler.Convert(Common.inputGUIDFile, saveOptions);
+
+            for (int pagenum = 1; pagenum <= convertedDocumentPath.PageCount; pagenum++)
+            {
+                convertedDocumentPath.Save("result-" + Path.GetFileNameWithoutExtension(Common.inputGUIDFile) + pagenum.ToString() + "." + outputFileType, pagenum);
+
+            }
+            
             //ExEnd:RenderWebpformatAsPath
         }
 

@@ -16,6 +16,9 @@ namespace GroupDocs.Conversion.Examples.CSharp
         // storagePath property to set input file/s directory
         public static string storagePath = Path.Combine(Environment.CurrentDirectory, @"../../../../Data/SampleFiles");
 
+        //fontsPath property
+        //public static string fontDir = Path.Combine(Environment.CurrentDirectory, @"../../../../Data/Fonts");
+
         // cachePath property to set cache file/s directory
         public static string cachePath = Path.Combine(Environment.CurrentDirectory, @"../../../../Data/Cache");
 
@@ -26,7 +29,7 @@ namespace GroupDocs.Conversion.Examples.CSharp
         public static string licensePath = Path.Combine(Environment.CurrentDirectory, @"GroupDocs.conversion.lic");
 
         // inputGUIDFile property to set input file
-        public static string inputGUIDFile = "DOCXsample.docx";
+        public static string inputGUIDFile = "SKGM_FINAL1Purchase_Anugypati_Report2421821.xps";
 
         // Instantiate GroupDocs.Conversion ConversionConfig class object
         private static ConversionConfig conversionConfig = null;
@@ -51,7 +54,7 @@ namespace GroupDocs.Conversion.Examples.CSharp
 
             // Set false to disable cache
             conversionConfig.UseCache = false;
-
+            //conversionConfig.FontDirectories.Add(fontDir);
             // Creating new ConversionHandler class object with ConversionConfig object
             conversionHandler = new ConversionHandler(conversionConfig);
 
@@ -109,6 +112,17 @@ namespace GroupDocs.Conversion.Examples.CSharp
             license.SetLicense(licenseStream);
         }
         //ExEnd:ApplyLicense
+
+        //ExStart:DocumentInformation
+        /// <summary>
+        /// Get page orientation 
+        /// </summary>
+        public static void DocumentInformation()
+        {
+            var docuemntInfo = conversionHandler.GetDocumentInfo(Common.inputGUIDFile);
+            Console.WriteLine(docuemntInfo.PageOrientation);
+        }
+        //ExEnd:DocumentInformation
     }
 
 
